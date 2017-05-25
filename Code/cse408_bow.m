@@ -10,25 +10,30 @@ feat_vec = zeros(size(voc)); %Initialize the feature vector'
 while line ~= -1
 
     %PUT YOUR IMPLEMENTATION HERE
-    %compare list of words in "voc" to "feat_vec"
-    
-    
-        %parse the text file for string values
-        tline=textscan(fid,'%s')
-        %store the string values in cell array
-        lexicons=tline{1}
-        %identify the unique words and store in matrix
-        [x,y,z]=unique(lexicons);
-        %store only the unique names from filepath
-        compthis=[x];
-        %convert to all lowercase for proper comparison
-        newcompthis = lower(compthis);
-        newvoc = lower(voc);
-        
-        bagofwords = any(ismember(newvoc, newcompthis));
-      
-    
+    content = {};
+    while 1
+        [token, remain] = strtok(line); % use strtok() to get the first word in current line
+        if strcmp(token,'') == 1 % if token is empty, it implies that there is no remaining token to read
+            break;
+        end
+        content{end + 1} = char(token);
+        line = remain;
+    end
+
+
+    % traverse content in the line and then count how many times they
+    % occur.
+    for a = 1:length(voc)
+        count = feat_vec(a);
+        for b = 1:length(content)
+               if strcmp(voc(a),content(b)) == 1
+                    count = count + 1;
+               end
+        end
+        feat_vec(a) = count;
+    end
+    line = fgets(fid); %keep reading the rest lines.
 end
 fclose(fid);
-disp(bagofwords)
+%disp(bagofwords)
 end
