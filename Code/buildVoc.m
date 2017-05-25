@@ -19,17 +19,44 @@ stopword = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there',
     'further', 'was', 'here', 'than'}; % define English stop words, from NLTK
 
 
-
-files = dir(fullfile(folder,'*.txt'));
-
+files = dir(fullfile(folder,'*.txt'))
+globalCounter = length(voc)+1
 for file = files'
-    [fid, msg] = fopen(fullfile(folder,file.name), 'rt');
-    error(msg);
-    line = fgets(fid); % Get the first line from
+    [fid, msg] = fopen(fullfile(folder,file.name), 'rt')
+    error(msg)
+    line = fgets(fid) % Get the first line from
      % the file.
+     ns = ''
     while line ~= -1
+        %ns = strcat(ns,fgetl(fid))
+        ns = strcat(ns,line);
 
+        line = fgets(fid);
         %PUT YOUR IMPLEMENTATION HERE
     end
+        ns = lower(ns)
+        ns = replace(ns,{',','.',':',';','â', '/', '(','('},' ')
+    
+    disp('here is cellllllllllllllllllllllll')
+    [token, remain] = strtok(ns);
+
+    co = any(ismember(stopword, token));
+        if co == 0
+            voc{globalCounter} = token;
+            globalCounter = globalCounter +1;
+        end 
+    for i =1:100;
+        [token, remain] = strtok(remain);        
+        co = any(ismember(stopword, token));
+        if co == 0
+            if (token ~="")
+                voc{globalCounter} = token;                
+                globalCounter = globalCounter +1;
+            end
+        end 
+    end
+   % disp(c)
+
     fclose(fid);
 end
+disp(voc)
